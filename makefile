@@ -1,5 +1,5 @@
 compile:
-	gcc -o clocure main.c
+	gcc -o clocure main.c repl.c parser.c -I.
 
 run: compile
 	./clocure

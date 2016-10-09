@@ -1,5 +1,6 @@
 #include<string.h>
 #include<stdio.h>
+#include<repl.h>
 
 #define REPL_MODE 0
 #define COMPILE_MODE 1
@@ -19,8 +20,7 @@ int main(int argc, char *argv[]) {
     }
 
     if(mode == REPL_MODE) {
-        printf("Alright, gettin places.\n");
-        return 0;
+        return runRepl();
     }
     else if (mode == HELP_MODE) {
         printf("Look I haven't made another mode yet so just freakin run \"clocjure repl\"!\n");
