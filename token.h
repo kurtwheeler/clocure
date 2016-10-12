@@ -1,5 +1,6 @@
-#ifndef TOKEN_HEADER
-#define TOKEN_HEADER
+#pragma once
+
+#include<stdint.h>
 
 #define IDENTIFIER 0
 #define STRING 1
@@ -14,8 +15,7 @@
 typedef struct Token {
     int type;
     void* contents;
+    void* next;
     int lineNumber;
     int columnNumber;
 } Token;
-
-#endif

@@ -1,5 +1,6 @@
 #include<string.h>
 #include<stdio.h>
+#include<stdint.h>
 #include<repl.h>
 
 #define REPL_MODE 0
@@ -7,7 +8,7 @@
 #define HELP_MODE 2
 #define ERROR_MODE 3
 
-int main(int argc, char *argv[]) {
+int main(int argc, uint8_t *argv[]) {
     int mode = ERROR_MODE;
     if (argc == 1) {
         mode = REPL_MODE;

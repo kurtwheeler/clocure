@@ -1,6 +1,7 @@
 #include<stdlib.h>
 #include<string.h>
 #include<stdio.h>
+#include<stdint.h>
 #include<repl.h>
 #include<parser.h>
 #include<token.h>
@@ -11,9 +12,9 @@ void quit() /* write error message and quit */
     exit(1);
 }
 
-char* getInput() {
+uint8_t* getInput() {
     int max = 20;
-    char* input = (char*)malloc(max); // allocate buffer
+    uint8_t* input = (uint8_t*)malloc(max); // allocate buffer
     if (input == 0) quit();
 
     int i = 0;
@@ -26,7 +27,7 @@ char* getInput() {
         input[i] = c;
         if (i == max - 1) { /* buffer full */
             max = max + max;
-            input = (char*)realloc(input, max); /* get a new and larger buffer */
+            input = (uint8_t*)realloc(input, max); /* get a new and larger buffer */
             if (input == 0) quit();
         }
         i++;
@@ -37,7 +38,7 @@ char* getInput() {
 
 int runRepl() {
     printf("Welcome to the Clocure REPL, enter your input below:\n");
-    char* replInput;
+    uint8_t* replInput;
     Token parsedToken;
 
     while(1) {
@@ -50,7 +51,7 @@ int runRepl() {
         parsedToken = parseToToken(replInput);
 
         if(parsedToken.type == STRING) {
-            printf("%s\n", (char*)parsedToken.contents);
+            printf("%s\n", (uint8_t*)parsedToken.contents);
         }
         else {
             printf("It's not a string, and that's all I know how to print so far.\n");

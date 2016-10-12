@@ -1,8 +1,5 @@
-#ifndef PARSER_HEADER
-#define PARSER_HEADER
+#pragma once
 
 #include<token.h>
 
-Token parseToToken(char* rawText);
-
-#endif
+Token parseToToken(uint8_t* rawText);
