@@ -1,8 +1,8 @@
 #ifndef PARSER_HEADER
 #define PARSER_HEADER
 
-#include<form.h>
+#include<token.h>
 
-Form parseToForm(char* rawText);
+Token parseToToken(char* rawText);
 
 #endif

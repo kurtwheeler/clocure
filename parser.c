@@ -1,10 +1,10 @@
 #include<stdlib.h>
 #include<parser.h>
-#include<form.h>
+#include<token.h>
 
-Form parseToForm(char* rawText) {
-    struct Form parsedForm;
-    parsedForm.type = STRING;
-    parsedForm.contents = rawText;
-    return parsedForm;
+Token parseToToken(char* rawText) {
+    struct Token parsedToken;
+    parsedToken.type = STRING;
+    parsedToken.contents = rawText;
+    return parsedToken;
 }

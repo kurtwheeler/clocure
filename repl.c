@@ -3,7 +3,7 @@
 #include<stdio.h>
 #include<repl.h>
 #include<parser.h>
-#include<form.h>
+#include<token.h>
 
 void quit() /* write error message and quit */
 {
@@ -38,7 +38,7 @@ char* getInput() {
 int runRepl() {
     printf("Welcome to the Clocure REPL, enter your input below:\n");
     char* replInput;
-    Form parsedForm;
+    Token parsedToken;
 
     while(1) {
         printf("#> ");
@@ -47,14 +47,16 @@ int runRepl() {
             break;
         }
 
-        parsedForm = parseToForm(replInput);
+        parsedToken = parseToToken(replInput);
 
-        if(parsedForm.type == STRING) {
-            printf("%s\n", (char*)parsedForm.contents);
+        if(parsedToken.type == STRING) {
+            printf("%s\n", (char*)parsedToken.contents);
         }
         else {
             printf("It's not a string, and that's all I know how to print so far.\n");
         }
+
+        free(replInput);
     }
 
     return 0;
