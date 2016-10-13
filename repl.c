@@ -5,6 +5,7 @@
 #include<repl.h>
 #include<parser.h>
 #include<token.h>
+#include<value.h>
 
 void quit() /* write error message and quit */
 {
@@ -40,6 +41,7 @@ int runRepl() {
     printf("Welcome to the Clocure REPL, enter your input below:\n");
     uint8_t* replInput;
     Token parsedToken;
+    Value* tokenValue;
 
     while(1) {
         printf("#> ");
@@ -47,11 +49,17 @@ int runRepl() {
         if (strcmp(replInput, "exit") == 0) {
             break;
         }
+        else if(strcmp(replInput, "") == 0) {
+            continue;
+        }
 
         parsedToken = parseToToken(replInput);
 
-        if(parsedToken.type == STRING) {
-            printf("%s\n", (uint8_t*)parsedToken.contents);
+        if(parsedToken.type == VALUE) {
+            tokenValue = (Value*)parsedToken.contents;
+            if(tokenValue->type == STRING) {
+                printf("%s\n", (uint8_t*)tokenValue->contents);
+            }
         }
         else {
             printf("It's not a string, and that's all I know how to print so far.\n");

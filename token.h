@@ -2,17 +2,12 @@
 
 #include<stdint.h>
 
-#define IDENTIFIER 0
-#define STRING 1
-#define INT 2
-#define FLOAT 3
-#define DOUBLE 4
-#define S_EXPRESSION 5
-#define KEYWORD 6
-#define NIL 7
-#define OPEN_PAREN 8
+#define VALUE 0
+#define S_EXPRESSION 1
+#define OPEN_PAREN 2
 
 typedef struct Token {
+    // consider changing ints to stdint types, but doesn't seem necessary
     int type;
     void* contents;
     void* next;
