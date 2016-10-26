@@ -14,16 +14,11 @@ uint8_t* peelString(uint8_t* remainingText, uint8_t** stringOutput) {
     uint8_t* stringStart = remainingText;
     uint64_t charsToPeel = 0;
 
-    // You think it's really this easy?
-    // You have to support \\, and newlines
-    // \\ should be easy, but newlines is the repl's problem
-    // Well maybe not only. It has to know when to continue, and it'll only if
-    // the parser tells it. Need a way to pass that up. True for parens too
     while(remainingText[0] != '"') {
         if (strlen(remainingText) > 1 && remainingText[0] == '\\'
             && (remainingText[1] == '"' || remainingText[1] == '\\')) {
             charsToPeel += 2;
-            remainingText += 2; // This is leaving \\" in the string instead of \"
+            remainingText += 2;
         }
         else {
             charsToPeel++;
@@ -55,21 +50,34 @@ Token parseToToken(uint8_t* rawText) {
         currentCharacter = remainingText[0];
         currentToken = malloc(sizeof(Token));
 
+        //consume whitespace
+        while(currentCharacter == ' ') {
+            remainingText++;
+            currentCharacter = remainingText[0];
+        }
+
         if(currentCharacter == '(') {
             currentToken->type = OPEN_PAREN;
 
             remainingText++;
         }
-        else if (currentCharacter == '"') {
+        else if(currentCharacter == '"') {
             currentValue = malloc(sizeof(Value));
             currentValue->type = STRING;
 
             uint8_t* peeledString = NULL;
             remainingText = peelString(remainingText, &peeledString);
             currentValue->contents = peeledString;
+            printf("%s\n", currentValue->contents);
 
             currentToken->type = VALUE;
             currentToken->contents = (void*)currentValue;
+        }
+        else if(currentCharacter == ')') {
+            while(stackHead->type != OPEN_PAREN) {
+                currentToken = stackHead->token;
+                stackHead = stackHead->next;
+            }
         }
 
         stackHead = malloc(sizeof(TokenStackNode));
