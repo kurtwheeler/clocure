@@ -5,6 +5,7 @@
 #define INT 2
 #define FLOAT 3
 #define DOUBLE 4
+#define LIST 5
 #define KEYWORD 6
 #define NIL 7
 

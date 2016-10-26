@@ -7,7 +7,7 @@
 typedef struct ParserResult {
     bool completed;
     uint8_t* remainingText;
-    Token* parsedToken;
+    Value* parsedValue;
 } ParserResult;
 
-uint8_t* parseToken(uint8_t* rawText, Token output);
+uint8_t* parseValue(uint8_t* rawText, Value* output);

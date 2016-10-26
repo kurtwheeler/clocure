@@ -9,6 +9,7 @@
 //REMOVE LATER:
 #include<stdio.h>
 
+// Why not have this use Value* as second parameter?
 uint8_t* peelString(uint8_t* remainingText, uint8_t** stringOutput) {
     remainingText++; // move past open double-quote
     uint8_t* stringStart = remainingText;
@@ -37,55 +38,47 @@ uint8_t* peelString(uint8_t* remainingText, uint8_t** stringOutput) {
     return ++remainingText; // remove trailing double-quote
 }
 
-Token parseToToken(uint8_t* rawText) {
+uint8_t* parseList(uint8_t* input, Value* output) {
+    input++; // move past open paren
+    output->type = LIST;
+    ListNode* head = malloc(sizeof(ListNode));
+    output->contents = head;
+
+    while(input[0] != ')') {
+        Value* nextValue = malloc(sizeof(Value));
+        input = parseValue(input, nextValue);
+        head->contents = nextValue;
+        ListNode* nextNode = malloc(sizeof(ListNode));
+        head->next = nextNode;
+        head = nextNode;
+    }
+
+    return input++; // move past close paren
+}
+
+uint8_t* parseValue(uint8_t* rawText, Value* output) {
     Value* currentValue = NULL;
-    Token* currentToken = NULL;
-    Token* lastToken = NULL;
-    TokenStackNode* stackHead = NULL;
-    TokenStackNode* stackLast = NULL;
-    uint8_t* remainingText = rawText;
-    uint8_t currentCharacter;
 
-    do {
-        currentCharacter = remainingText[0];
-        currentToken = malloc(sizeof(Token));
+    //consume whitespace
+    while(rawText[0] == ' ') {
+        rawText++;
+    }
 
-        //consume whitespace
-        while(currentCharacter == ' ') {
-            remainingText++;
-            currentCharacter = remainingText[0];
-        }
+    if(rawText[0] == '(') {
+        return parseList(rawText, output);
+    }
+    else if(currentCharacter == '"') {
+        currentValue = malloc(sizeof(Value));
+        currentValue->type = STRING;
 
-        if(currentCharacter == '(') {
-            currentToken->type = OPEN_PAREN;
+        uint8_t* peeledString = NULL;
+        remainingText = peelString(remainingText, &peeledString);
+        currentValue->contents = peeledString;
+        printf("%s\n", currentValue->contents);
 
-            remainingText++;
-        }
-        else if(currentCharacter == '"') {
-            currentValue = malloc(sizeof(Value));
-            currentValue->type = STRING;
-
-            uint8_t* peeledString = NULL;
-            remainingText = peelString(remainingText, &peeledString);
-            currentValue->contents = peeledString;
-            printf("%s\n", currentValue->contents);
-
-            currentToken->type = VALUE;
-            currentToken->contents = (void*)currentValue;
-        }
-        else if(currentCharacter == ')') {
-            while(stackHead->type != OPEN_PAREN) {
-                currentToken = stackHead->token;
-                stackHead = stackHead->next;
-            }
-        }
-
-        stackHead = malloc(sizeof(TokenStackNode));
-        stackHead->token = currentToken;
-        stackHead->next = stackLast;
-        stackLast = stackHead;
-
-    } while (strlen(remainingText) > 0);
+        currentToken->type = VALUE;
+        currentToken->contents = (void*)currentValue;
+    }
 
     struct Value parsedValue;
     parsedValue.type = STRING;

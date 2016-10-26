@@ -40,8 +40,8 @@ uint8_t* getInput() {
 int runRepl() {
     printf("Welcome to the Clocure REPL, enter your input below:\n");
     uint8_t* replInput;
-    Token parsedToken;
-    Value* tokenValue;
+    // check memory was successfully allocated
+    Value* parsedValue = malloc(sizeof(Value));
 
     while(1) {
         printf("#> ");
@@ -53,13 +53,10 @@ int runRepl() {
             continue;
         }
 
-        parsedToken = parseToToken(replInput);
+        parseValue(replInput, parsedValue);
 
-        if(parsedToken.type == VALUE) {
-            tokenValue = (Value*)parsedToken.contents;
-            if(tokenValue->type == STRING) {
-                printf("%s\n", (uint8_t*)tokenValue->contents);
-            }
+        if(parsedValue->type == STRING) {
+            printf("%s\n", (uint8_t*)parsedValue->contents);
         }
         else {
             printf("It's not a string, and that's all I know how to print so far.\n");

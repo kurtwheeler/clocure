@@ -10,7 +10,6 @@ typedef struct Token {
     // consider changing ints to stdint types, but doesn't seem necessary
     int type;
     void* contents;
-    void* next;
     int lineNumber;
     int columnNumber;
 } Token;
