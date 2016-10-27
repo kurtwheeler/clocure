@@ -11,6 +11,21 @@ uint8_t* toString(Value* this) {
         asprintf(&output, "\"%s\"", (char*)this->contents);
         return (uint8_t*)output;
     }
+    else if(this->type == LONG) {
+        char* output;
+        asprintf(&output, "%lld", *(long long*)this->contents);
+        /* asprintf(&output, "*long*%lld", *(long long*)this->contents); */
+        return (uint8_t*)output;
+    }
+    else if(this->type == DECIMAL) {
+        char* output;
+        asprintf(&output, "%lf", *(double*)this->contents);
+        /* asprintf(&output, "*decimal*%lf", *(double*)this->contents); */
+        return (uint8_t*)output;
+    }
+    else if(this->type == SYMBOL) {
+        return (uint8_t*)this->contents;
+    }
     else if(this->type == LIST) {
         char* output;
         ListNode* head = this->contents;
@@ -42,21 +57,32 @@ uint8_t* toString(Value* this) {
     }
 }
 
-void freeValueContents(Value* this) {
-    if(this->type == STRING) {
-        free(this->contents);
-    }
-    else if(this->type == LIST) {
-        ListNode* head = this->contents;
-        while(head != NULL) {
-            if(head->contents != NULL){
-                freeValueContents(head->contents);
-                free(head->contents);
-            }
-
-            ListNode* next = head->next;
-            free(head);
-            head = next;
+void freeList(Value* this) {
+    ListNode* head = this->contents;
+    while(head != NULL) {
+        if(head->contents != NULL){
+            freeValueContents(head->contents);
+            free(head->contents);
         }
+
+        ListNode* next = head->next;
+        free(head);
+        head = next;
+    }
+}
+
+void freeValueContents(Value* this) {
+    switch(this->type) {
+    case STRING:
+    case SYMBOL:
+    case LONG:
+    case DECIMAL:
+        printf("freeing a value\n");
+        free(this->contents);
+        break;
+    case LIST:
+        printf("freeing a list\n");
+        freeList(this);
+        break;
     }
 }
