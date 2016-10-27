@@ -23,7 +23,7 @@ char* toString(Value* this) {
         /* asprintf(&output, "*decimal*%lf", *(double*)this->contents); */
         return output;
     }
-    else if(this->type == SYMBOL) {
+    else if(this->type == SYMBOL || this->type == NIL || this->type == BOOLEAN) {
         return (char*)this->contents;
     }
     else if(this->type == LIST) {
@@ -77,6 +77,8 @@ void freeValueContents(Value* this) {
     case SYMBOL:
     case LONG:
     case DECIMAL:
+    case NIL:
+    case BOOLEAN:
         free(this->contents);
         break;
     case LIST:

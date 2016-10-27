@@ -14,7 +14,7 @@ void quit() /* write error message and quit */
 
 char* getInput() {
     int max = 20;
-    char* input = malloc(max); // allocate buffer
+    char* input = malloc(sizeof(char)*max); // allocate buffer
     if (input == 0) quit();
 
     int i = 0;
@@ -27,7 +27,7 @@ char* getInput() {
         input[i] = c;
         if (i == max - 1) { /* buffer full */
             max = max + max;
-            input = realloc(input, max); /* get a new and larger buffer */
+            input = realloc(input, sizeof(char)*max); /* get a new and larger buffer */
             if (input == 0) quit();
         }
         i++;

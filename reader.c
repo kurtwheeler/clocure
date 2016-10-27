@@ -8,6 +8,8 @@
 //REMOVE LATER:
 #include<stdio.h>
 
+const char* wordEnders = "\\ \"()\n";
+
 // May need to go to a utils file at some point
 // Returns true if the first char of a is in b
 bool firstCharIn(const char* a, const char* b) {
@@ -55,7 +57,7 @@ char* parseNumber(char* input, Value* output) {
     char* remainingText = input;
     long charsToPeel = 0;
 
-    while(remainingText[0] != '\0' && !firstCharIn(remainingText, " \"\\\()")) {
+    while(remainingText[0] != '\0' && !firstCharIn(remainingText, wordEnders)) {
         charsToPeel++;
         remainingText++;
     }
@@ -87,7 +89,7 @@ char* parseSymbol(char* input, Value* output) {
     char* remainingText = input;
     uint64_t charsToPeel = 0;
 
-    while(remainingText[0] != '\0' && !firstCharIn(remainingText, " \"\\\()")) {
+    while(remainingText[0] != '\0' && !firstCharIn(remainingText, wordEnders)) {
         charsToPeel++;
         remainingText++;
     }
@@ -130,6 +132,54 @@ char* parseList(char* input, Value* output) {
     return ++input; // move past close paren
 }
 
+char* parseNil(char* input, Value* output) {
+    char* temp = malloc(sizeof(char)*4);
+    strcpy(temp, "nil");
+
+    output->type = NIL;
+    output->contents = temp;
+
+    return (input+3);
+}
+
+bool isNilForm(char* input) {
+    bool isLongEnough = strlen(input) >= 3;
+    bool doesntContinue = (input[3] == '\0' || firstCharIn((input+3), wordEnders));
+    return (isLongEnough && strstr(input, "nil") && doesntContinue);
+}
+
+char* parseTrue(char* input, Value* output) {
+    char* temp = malloc(sizeof(char)*5);
+    strcpy(temp, "true");
+
+    output->type = BOOLEAN;
+    output->contents = temp;
+
+    return (input+4);
+}
+
+bool isTrueForm(char* input) {
+    bool isLongEnough = strlen(input) >= 4;
+    bool doesntContinue = (input[4] == '\0' || firstCharIn((input+4), wordEnders));
+    return (isLongEnough && strstr(input, "true") && doesntContinue);
+}
+
+char* parseFalse(char* input, Value* output) {
+    char* temp = malloc(sizeof(char)*6);
+    strcpy(temp, "false");
+
+    output->type = BOOLEAN;
+    output->contents = temp;
+
+    return (input+5);
+}
+
+bool isFalseForm(char* input) {
+    bool isLongEnough = strlen(input) >= 5;
+    bool doesntContinue = (input[5] == '\0' || firstCharIn((input+5), wordEnders));
+    return (isLongEnough && strstr(input, "false") && doesntContinue);
+}
+
 char* readValue(char* rawText, Value* output) {
     //consume whitespace
     while(rawText[0] == ' ') {
@@ -144,6 +194,15 @@ char* readValue(char* rawText, Value* output) {
     }
     else if(firstCharIn(rawText, "0123456789")) {
         return parseNumber(rawText, output);
+    }
+    else if(isNilForm(rawText)) {
+        return parseNil(rawText, output);
+    }
+    else if(isTrueForm(rawText)) {
+        return parseTrue(rawText, output);
+    }
+    else if(isFalseForm(rawText)) {
+        return parseFalse(rawText, output);
     }
     else {
         return parseSymbol(rawText, output);

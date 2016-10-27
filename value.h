@@ -13,7 +13,8 @@
 #define DECIMAL 8
 #define FLOAT 9
 #define BIGDECIMAL 10
-#define BOOL 11
+#define BOOLEAN 11
+#define CHARACTER 12
 
 typedef struct Value {
     int type;
