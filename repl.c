@@ -52,10 +52,17 @@ int runRepl() {
             continue;
         }
 
-        parseValue(replInput, parsedValue);
-        printf("%s\n", toString(parsedValue));
+        uint8_t* inputStart = replInput;
 
-        free(replInput);
+        while (strcmp(replInput, "") != 0) {
+            replInput = parseValue(replInput, parsedValue);
+            printf("%s\n", toString(parsedValue));
+
+            freeValueContents(parsedValue);
+
+        }
+
+        free(inputStart);
     }
 
     return 0;

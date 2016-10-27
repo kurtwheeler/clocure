@@ -41,19 +41,26 @@ uint8_t* parseString(uint8_t* remainingText, Value* output) {
 uint8_t* parseList(uint8_t* input, Value* output) {
     input++; // move past open paren
     output->type = LIST;
+
     ListNode* head = malloc(sizeof(ListNode));
+    head->contents = NULL;
+    head->next = NULL;
     output->contents = head;
 
     while(input[0] != ')') {
         Value* nextValue = malloc(sizeof(Value));
         input = parseValue(input, nextValue);
         head->contents = nextValue;
+
         ListNode* nextNode = malloc(sizeof(ListNode));
+        nextNode->contents = NULL;
+        nextNode->next = NULL;
+
         head->next = nextNode;
         head = nextNode;
     }
 
-    return input++; // move past close paren
+    return ++input; // move past close paren
 }
 
 uint8_t* parseValue(uint8_t* rawText, Value* output) {

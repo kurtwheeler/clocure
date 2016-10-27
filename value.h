@@ -17,3 +17,4 @@ typedef struct Value {
 } Value;
 
 uint8_t* toString(Value* this);
+void freeValueContents(Value* this);

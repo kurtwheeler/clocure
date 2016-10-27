@@ -41,3 +41,22 @@ uint8_t* toString(Value* this) {
         return "It's neither a string nor a list, and that's all I know how to print so far.";
     }
 }
+
+void freeValueContents(Value* this) {
+    if(this->type == STRING) {
+        free(this->contents);
+    }
+    else if(this->type == LIST) {
+        ListNode* head = this->contents;
+        while(head != NULL) {
+            if(head->contents != NULL){
+                freeValueContents(head->contents);
+                free(head->contents);
+            }
+
+            ListNode* next = head->next;
+            free(head);
+            head = next;
+        }
+    }
+}
