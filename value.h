@@ -1,5 +1,7 @@
 #pragma once
 
+#include<stdint.h>
+
 #define IDENTIFIER 0
 #define STRING 1
 #define INT 2
@@ -13,3 +15,5 @@ typedef struct Value {
     int type;
     void* contents;
 } Value;
+
+uint8_t* toString(Value* this);

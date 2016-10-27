@@ -3,14 +3,12 @@
 #include<string.h>
 #include<parser.h>
 #include<value.h>
-#include<token.h>
-#include<tokenStack.h>
+#include<listNode.h>
 
 //REMOVE LATER:
 #include<stdio.h>
 
-// Why not have this use Value* as second parameter?
-uint8_t* peelString(uint8_t* remainingText, uint8_t** stringOutput) {
+uint8_t* parseString(uint8_t* remainingText, Value* output) {
     remainingText++; // move past open double-quote
     uint8_t* stringStart = remainingText;
     uint64_t charsToPeel = 0;
@@ -27,13 +25,15 @@ uint8_t* peelString(uint8_t* remainingText, uint8_t** stringOutput) {
         }
     }
 
-    uint8_t* outputTemp = malloc(charsToPeel+1);
-    if(outputTemp == NULL) {
+    uint8_t* outputString = malloc(charsToPeel+1);
+    if(outputString == NULL) {
         printf("This is a reminder to check malloc's at some point.\n");
     }
-    strncpy(outputTemp, stringStart, charsToPeel);
-    outputTemp[charsToPeel] = '\0';
-    *stringOutput = outputTemp;
+    strncpy(outputString, stringStart, charsToPeel);
+    outputString[charsToPeel] = '\0';
+
+    output->type = STRING;
+    output->contents = outputString;
 
     return ++remainingText; // remove trailing double-quote
 }
@@ -57,8 +57,6 @@ uint8_t* parseList(uint8_t* input, Value* output) {
 }
 
 uint8_t* parseValue(uint8_t* rawText, Value* output) {
-    Value* currentValue = NULL;
-
     //consume whitespace
     while(rawText[0] == ' ') {
         rawText++;
@@ -67,25 +65,9 @@ uint8_t* parseValue(uint8_t* rawText, Value* output) {
     if(rawText[0] == '(') {
         return parseList(rawText, output);
     }
-    else if(currentCharacter == '"') {
-        currentValue = malloc(sizeof(Value));
-        currentValue->type = STRING;
-
-        uint8_t* peeledString = NULL;
-        remainingText = peelString(remainingText, &peeledString);
-        currentValue->contents = peeledString;
-        printf("%s\n", currentValue->contents);
-
-        currentToken->type = VALUE;
-        currentToken->contents = (void*)currentValue;
+    else if(rawText[0] == '"') {
+        rawText = parseString(rawText, output);
     }
 
-    struct Value parsedValue;
-    parsedValue.type = STRING;
-    parsedValue.contents = rawText;
-
-    struct Token parsedToken;
-    parsedToken.type = VALUE;
-    parsedToken.contents = &parsedValue;
-    return parsedToken;
+    return rawText;
 }

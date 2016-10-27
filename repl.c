@@ -4,7 +4,6 @@
 #include<stdint.h>
 #include<repl.h>
 #include<parser.h>
-#include<token.h>
 #include<value.h>
 
 void quit() /* write error message and quit */
@@ -54,13 +53,7 @@ int runRepl() {
         }
 
         parseValue(replInput, parsedValue);
-
-        if(parsedValue->type == STRING) {
-            printf("%s\n", (uint8_t*)parsedValue->contents);
-        }
-        else {
-            printf("It's not a string, and that's all I know how to print so far.\n");
-        }
+        printf("%s\n", toString(parsedValue));
 
         free(replInput);
     }

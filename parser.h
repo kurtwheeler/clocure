@@ -2,7 +2,7 @@
 
 #include<stdint.h>
 #include<stdbool.h>
-#include<token.h>
+#include<value.h>
 
 typedef struct ParserResult {
     bool completed;
