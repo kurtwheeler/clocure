@@ -1,7 +1,7 @@
 #include<stdlib.h>
 #include<stdint.h>
 #include<string.h>
-#include<parser.h>
+#include<reader.h>
 #include<value.h>
 #include<listNode.h>
 
@@ -38,6 +38,10 @@ uint8_t* parseString(uint8_t* remainingText, Value* output) {
     return ++remainingText; // remove trailing double-quote
 }
 
+uint8_t* parseSymbol(uint8_t* input, Value* output) {
+
+}
+
 uint8_t* parseList(uint8_t* input, Value* output) {
     input++; // move past open paren
     output->type = LIST;
@@ -49,7 +53,7 @@ uint8_t* parseList(uint8_t* input, Value* output) {
 
     while(input[0] != ')') {
         Value* nextValue = malloc(sizeof(Value));
-        input = parseValue(input, nextValue);
+        input = readValue(input, nextValue);
         head->contents = nextValue;
 
         ListNode* nextNode = malloc(sizeof(ListNode));
@@ -63,7 +67,7 @@ uint8_t* parseList(uint8_t* input, Value* output) {
     return ++input; // move past close paren
 }
 
-uint8_t* parseValue(uint8_t* rawText, Value* output) {
+uint8_t* readValue(uint8_t* rawText, Value* output) {
     //consume whitespace
     while(rawText[0] == ' ') {
         rawText++;
@@ -73,8 +77,9 @@ uint8_t* parseValue(uint8_t* rawText, Value* output) {
         return parseList(rawText, output);
     }
     else if(rawText[0] == '"') {
-        rawText = parseString(rawText, output);
+        return parseString(rawText, output);
     }
-
-    return rawText;
+    else {
+        return parseSymbol(rawText, output);
+    }
 }

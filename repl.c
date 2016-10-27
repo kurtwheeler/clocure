@@ -3,7 +3,7 @@
 #include<stdio.h>
 #include<stdint.h>
 #include<repl.h>
-#include<parser.h>
+#include<reader.h>
 #include<value.h>
 
 void quit() /* write error message and quit */
@@ -55,7 +55,7 @@ int runRepl() {
         uint8_t* inputStart = replInput;
 
         while (strcmp(replInput, "") != 0) {
-            replInput = parseValue(replInput, parsedValue);
+            replInput = readValue(replInput, parsedValue);
             printf("%s\n", toString(parsedValue));
 
             freeValueContents(parsedValue);
