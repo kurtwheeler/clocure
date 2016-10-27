@@ -52,6 +52,33 @@ char* parseString(char* remainingText, Value* output) {
     return ++remainingText; // remove trailing double-quote
 }
 
+char* populateContentsWithString(char* input, Value* output) {
+    char* remainingText = input;
+    uint64_t charsToPeel = 0;
+
+    while(remainingText[0] != '\0' && !firstCharIn(remainingText, wordEnders)) {
+        charsToPeel++;
+        remainingText++;
+    }
+
+    char* outputString = malloc(charsToPeel+1);
+    if(outputString == NULL) {
+        printf("This is a reminder to check malloc's at some point.\n");
+    }
+    strncpy(outputString, input, charsToPeel);
+    outputString[charsToPeel] = '\0';
+
+    output->contents = outputString;
+
+    return remainingText;
+}
+
+char* parseKeyword(char* input, Value* output) {
+    char* remainingText = populateContentsWithString(input, output);
+    output->type = KEYWORD;
+    return remainingText;
+}
+
 // still limited, doesn't handle BIGINT, RATIO, or BIGDECIMAL
 char* parseNumber(char* input, Value* output) {
     char* remainingText = input;
@@ -86,24 +113,8 @@ char* parseNumber(char* input, Value* output) {
 }
 
 char* parseSymbol(char* input, Value* output) {
-    char* remainingText = input;
-    uint64_t charsToPeel = 0;
-
-    while(remainingText[0] != '\0' && !firstCharIn(remainingText, wordEnders)) {
-        charsToPeel++;
-        remainingText++;
-    }
-
-    char* outputString = malloc(charsToPeel+1);
-    if(outputString == NULL) {
-        printf("This is a reminder to check malloc's at some point.\n");
-    }
-    strncpy(outputString, input, charsToPeel);
-    outputString[charsToPeel] = '\0';
-
+    char* remainingText = populateContentsWithString(input, output);
     output->type = SYMBOL;
-    output->contents = outputString;
-
     return remainingText;
 }
 
@@ -145,7 +156,7 @@ char* parseNil(char* input, Value* output) {
 bool isNilForm(char* input) {
     bool isLongEnough = strlen(input) >= 3;
     bool doesntContinue = (input[3] == '\0' || firstCharIn((input+3), wordEnders));
-    return (isLongEnough && strstr(input, "nil") && doesntContinue);
+    return (isLongEnough && strstr(input, "nil") == input && doesntContinue);
 }
 
 char* parseTrue(char* input, Value* output) {
@@ -161,7 +172,7 @@ char* parseTrue(char* input, Value* output) {
 bool isTrueForm(char* input) {
     bool isLongEnough = strlen(input) >= 4;
     bool doesntContinue = (input[4] == '\0' || firstCharIn((input+4), wordEnders));
-    return (isLongEnough && strstr(input, "true") && doesntContinue);
+    return (isLongEnough && strstr(input, "true") == input && doesntContinue);
 }
 
 char* parseFalse(char* input, Value* output) {
@@ -177,7 +188,7 @@ char* parseFalse(char* input, Value* output) {
 bool isFalseForm(char* input) {
     bool isLongEnough = strlen(input) >= 5;
     bool doesntContinue = (input[5] == '\0' || firstCharIn((input+5), wordEnders));
-    return (isLongEnough && strstr(input, "false") && doesntContinue);
+    return (isLongEnough && strstr(input, "false") == input  && doesntContinue);
 }
 
 char* readValue(char* rawText, Value* output) {
@@ -191,6 +202,9 @@ char* readValue(char* rawText, Value* output) {
     }
     else if(rawText[0] == '"') {
         return parseString(rawText, output);
+    }
+    else if(rawText[0] == ':') {
+        return parseKeyword(rawText, output);
     }
     else if(firstCharIn(rawText, "0123456789")) {
         return parseNumber(rawText, output);
