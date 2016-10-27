@@ -20,5 +20,5 @@ typedef struct Value {
     void* contents;
 } Value;
 
-uint8_t* toString(Value* this);
+char* toString(Value* this);
 void freeValueContents(Value* this);

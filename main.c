@@ -8,7 +8,7 @@
 #define HELP_MODE 2
 #define ERROR_MODE 3
 
-int main(int argc, uint8_t *argv[]) {
+int main(int argc, char *argv[]) {
     int mode = ERROR_MODE;
     if (argc == 1) {
         mode = REPL_MODE;

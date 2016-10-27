@@ -4,4 +4,4 @@
 #include<stdbool.h>
 #include<value.h>
 
-uint8_t* readValue(uint8_t* rawText, Value* output);
+char* readValue(char* rawText, Value* output);

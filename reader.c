@@ -11,7 +11,7 @@
 // May need to go to a utils file at some point
 // Returns true if the first char of a is in b
 bool firstCharIn(const char* a, const char* b) {
-    char* firstOccurance = strpbrk((char*)a, b);
+    char* firstOccurance = strpbrk(a, b);
     if(firstOccurance != 0 && a[0] == *firstOccurance) {
         return true;
     }
@@ -20,9 +20,9 @@ bool firstCharIn(const char* a, const char* b) {
     }
 }
 
-uint8_t* parseString(uint8_t* remainingText, Value* output) {
+char* parseString(char* remainingText, Value* output) {
     remainingText++; // move past open double-quote
-    uint8_t* stringStart = remainingText;
+    char* stringStart = remainingText;
     uint64_t charsToPeel = 0;
 
     while(remainingText[0] != '"') {
@@ -37,7 +37,7 @@ uint8_t* parseString(uint8_t* remainingText, Value* output) {
         }
     }
 
-    uint8_t* outputString = malloc(charsToPeel+1);
+    char* outputString = malloc(charsToPeel+1);
     if(outputString == NULL) {
         printf("This is a reminder to check malloc's at some point.\n");
     }
@@ -51,11 +51,11 @@ uint8_t* parseString(uint8_t* remainingText, Value* output) {
 }
 
 // still limited, doesn't handle BIGINT, RATIO, or BIGDECIMAL
-uint8_t* parseNumber(uint8_t* input, Value* output) {
-    uint8_t* remainingText = input;
+char* parseNumber(char* input, Value* output) {
+    char* remainingText = input;
     long charsToPeel = 0;
 
-    while(remainingText[0] != '\0' && !firstCharIn((char*)remainingText, " \"\\\()")) {
+    while(remainingText[0] != '\0' && !firstCharIn(remainingText, " \"\\\()")) {
         charsToPeel++;
         remainingText++;
     }
@@ -83,16 +83,16 @@ uint8_t* parseNumber(uint8_t* input, Value* output) {
     return remainingText;
 }
 
-uint8_t* parseSymbol(uint8_t* input, Value* output) {
-    uint8_t* remainingText = input;
+char* parseSymbol(char* input, Value* output) {
+    char* remainingText = input;
     uint64_t charsToPeel = 0;
 
-    while(remainingText[0] != '\0' && !firstCharIn((char*)remainingText, " \"\\\()")) {
+    while(remainingText[0] != '\0' && !firstCharIn(remainingText, " \"\\\()")) {
         charsToPeel++;
         remainingText++;
     }
 
-    uint8_t* outputString = malloc(charsToPeel+1);
+    char* outputString = malloc(charsToPeel+1);
     if(outputString == NULL) {
         printf("This is a reminder to check malloc's at some point.\n");
     }
@@ -105,7 +105,7 @@ uint8_t* parseSymbol(uint8_t* input, Value* output) {
     return remainingText;
 }
 
-uint8_t* parseList(uint8_t* input, Value* output) {
+char* parseList(char* input, Value* output) {
     input++; // move past open paren
     output->type = LIST;
 
@@ -130,7 +130,7 @@ uint8_t* parseList(uint8_t* input, Value* output) {
     return ++input; // move past close paren
 }
 
-uint8_t* readValue(uint8_t* rawText, Value* output) {
+char* readValue(char* rawText, Value* output) {
     //consume whitespace
     while(rawText[0] == ' ') {
         rawText++;

@@ -12,9 +12,9 @@ void quit() /* write error message and quit */
     exit(1);
 }
 
-uint8_t* getInput() {
+char* getInput() {
     int max = 20;
-    uint8_t* input = (uint8_t*)malloc(max); // allocate buffer
+    char* input = malloc(max); // allocate buffer
     if (input == 0) quit();
 
     int i = 0;
@@ -27,7 +27,7 @@ uint8_t* getInput() {
         input[i] = c;
         if (i == max - 1) { /* buffer full */
             max = max + max;
-            input = (uint8_t*)realloc(input, max); /* get a new and larger buffer */
+            input = realloc(input, max); /* get a new and larger buffer */
             if (input == 0) quit();
         }
         i++;
@@ -38,7 +38,7 @@ uint8_t* getInput() {
 
 int runRepl() {
     printf("Welcome to the Clocure REPL, enter your input below:\n");
-    uint8_t* replInput;
+    char* replInput;
     // check memory was successfully allocated
     Value* parsedValue = malloc(sizeof(Value));
 
@@ -52,7 +52,7 @@ int runRepl() {
             continue;
         }
 
-        uint8_t* inputStart = replInput;
+        char* inputStart = replInput;
 
         while (strcmp(replInput, "") != 0) {
             replInput = readValue(replInput, parsedValue);
